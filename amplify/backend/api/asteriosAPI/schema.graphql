@@ -1,0 +1,65 @@
+type Server
+  @model(queries: { list: "listServers" }, mutations: null, subscriptions: null)
+  @auth(
+    rules: [
+      { allow: public, provider: apiKey, operations: [read] }
+      { allow: public, provider: iam, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  asteriosId: ID!
+  name: String!
+  enabled: Boolean!
+  bosses: [ServerRaidbossDeathLogs] @connection(keyName: "byServer", fields: ["id"])
+}
+
+type RaidBoss
+  @model(
+    queries: { list: "listRaidBosses", get: "getRaidBoss" }
+    mutations: null
+    subscriptions: null
+  )
+  @auth(
+    rules: [
+      { allow: public, provider: apiKey, operations: [read] }
+      { allow: public, provider: iam, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  name: String!
+  floor: Int
+  image: String
+  chest: String
+  deathLogs: [ServerRaidbossDeathLogs] @connection(keyName: "byRaidBoss", fields: ["id"])
+}
+
+type ServerRaidbossDeathLogs
+  @auth(
+    rules: [
+      { allow: public, provider: apiKey }
+      { allow: public, provider: iam, operations: [read] }
+    ]
+  )
+  @model(
+    queries: { list: "listServerRaidbossDeathLogs" }
+    mutations: { create: "createServerRaidbossDeathLogs" }
+    subscriptions: { onCreate: ["onCreateDeathLog"] }
+  )
+  @key(name: "byRaidBoss", fields: ["raidBossId", "serverId"])
+  @key(name: "byServer", fields: ["serverId", "raidBossId"])
+  @key(name: "byIsoDate", fields: ["serverId", "isoDate"], queryField: "listByIsoDate") {
+  id: ID!
+  isoDate: AWSDateTime
+  content: String
+  contentSnippet: String
+  link: AWSURL
+  title: String
+  serverId: ID!
+  raidBossId: ID!
+  server: Server! @connection(fields: ["serverId"])
+  raidBoss: RaidBoss! @connection(fields: ["raidBossId"])
+}
+
+# type Query {
+#     @aws_api_key
+# }

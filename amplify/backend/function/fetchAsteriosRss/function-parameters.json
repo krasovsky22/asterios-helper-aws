@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "api": {
+      "asteriosAPI": [
+        "Query",
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
