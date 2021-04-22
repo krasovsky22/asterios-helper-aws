@@ -59,7 +59,3 @@ type ServerRaidbossDeathLogs
   server: Server! @connection(fields: ["serverId"])
   raidBoss: RaidBoss! @connection(fields: ["raidBossId"])
 }
-
-# type Query {
-#     @aws_api_key
-# }

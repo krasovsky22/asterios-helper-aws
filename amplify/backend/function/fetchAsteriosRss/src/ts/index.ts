@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
 import Parser from "rss-parser";
 import { v4 as uuid } from "uuid";
-import { fetchRaidBosses, fetchServers, persisDeathLog } from "./api";
+import { fetchRaidBosses, fetchServerDeathLogs, fetchServers, persisDeathLog } from "./api";
 
 const parser = new Parser();
 
@@ -54,6 +54,13 @@ type RaidBossDeathRssRecordType = {
   isoDate: string;
 };
 
+type ServerDeathLog = {
+  id: string;
+  isoDate: string;
+  raidBossId: string;
+  serverId: string;
+};
+
 const fetchRssFeed = async (serverId: number): Promise<RaidBossDeathRssRecordType[]> => {
   const URL = `https://asterios.tm/index.php?cmd=rss&serv=${serverId}&id=keyboss&out=xml`;
   const feed = await parser.parseURL(URL);
@@ -69,10 +76,12 @@ const fetchRssFeed = async (serverId: number): Promise<RaidBossDeathRssRecordTyp
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
   const servers = await fetchServers<ServerType>();
   const raidBosses = await fetchRaidBosses<RaidBossType>();
-  //console.log(servers, raidBosses);
 
   servers.forEach(async (server: ServerType) => {
     const rssFeedData = await fetchRssFeed(server.asteriosId);
+    const deathLogs = await fetchServerDeathLogs<ServerDeathLog>(server.id);
+    console.log(deathLogs, server.id);
+    return;
 
     raidBosses.forEach(async (boss) => {
       const rssFeedBossData = rssFeedData.find((item) => item.title?.includes(boss.name));
@@ -94,7 +103,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         return await persisDeathLog(log);
       }
 
-      const latestDeathLog = 
       console.log(boss.deathLogs.items);
       //   const reportDate = new Date(rssFeedBossData.isoDate);
       //   console.log(rssFeedBossData);

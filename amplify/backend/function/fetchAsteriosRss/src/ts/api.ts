@@ -1,48 +1,14 @@
-import gql from "graphql-tag";
 import axios from "axios";
-import * as graphql from "graphql";
-const { print } = graphql;
+import { print } from "graphql";
+import {
+  createDeathLog,
+  listRaidBosses,
+  listServerDeathLogs,
+  listServers,
+  QueryType,
+} from "./queries";
+
 require("dotenv").config();
-
-const listServers = gql`
-  query listEnabledServers {
-    listServers(filter: { enabled: { eq: true } }) {
-      items {
-        id
-        enabled
-        name
-        asteriosId
-      }
-    }
-  }
-`;
-
-const listRaidBosses = gql`
-  query ListRaidBosses {
-    listRaidBosses {
-      items {
-        deathLogs(sortDirection: DESC, limit: 1) {
-          items {
-            id
-            isoDate
-            serverId
-            raidBossId
-          }
-        }
-        id
-        name
-      }
-    }
-  }
-`;
-
-const createDeathLog = gql`
-  mutation createDeathLog($input: CreateServerRaidbossDeathLogsInput!) {
-    createServerRaidbossDeathLogs(input: $input) {
-      id
-    }
-  }
-`;
 
 type RequestDataType = {
   query: string;
@@ -52,13 +18,15 @@ type RequestDataType = {
 };
 
 const createAwsSyncApiCall = async <T>(
-  query: graphql.DocumentNode,
-  queryName: string,
+  queryMethod: QueryType,
   input?: Record<string, string | number>,
 ): Promise<T[]> => {
+  const { query, queryName } = queryMethod;
   const requestData: RequestDataType = {
     query: print(query),
   };
+
+  console.log(print(query));
 
   if (input) {
     requestData.variables = { input };
@@ -73,36 +41,20 @@ const createAwsSyncApiCall = async <T>(
     data: requestData,
   });
 
-  console.log("asdasd", data);
+  console.log(queryName, data?.data, data?.data[queryName]);
 
-  //fetch
-  if (!input) {
-    const response = data?.data[queryName]?.items ?? [];
-
-    if (response.length === 0) {
-      throw new Error(`Unable to fetch ${queryName} from amplify api.`);
-    }
-
-    return response;
-  }
-
-  //mutation
-  const response = data?.data[queryName] ?? [];
-
-  if (response.length === 0) {
-    throw new Error(`Unable to fetch ${queryName} from amplify api.`);
-  }
-
-  return response;
+  return data?.data[queryName]?.items ?? data?.data[queryName] ?? [];
 };
 
 export const fetchServers = async <T>(): Promise<T[]> =>
-  await createAwsSyncApiCall<T>(listServers, "listServers");
+  await createAwsSyncApiCall<T>(listServers());
 
 export const fetchRaidBosses = async <T>(): Promise<T[]> =>
-  await createAwsSyncApiCall<T>(listRaidBosses, "listRaidBosses");
+  await createAwsSyncApiCall<T>(listRaidBosses());
 
 export const persisDeathLog = async <T = { id: number }>(
   input: Record<string, string | number>,
-): Promise<T[]> =>
-  await createAwsSyncApiCall<T>(createDeathLog, "createServerRaidbossDeathLogs:", input);
+): Promise<T[]> => await createAwsSyncApiCall<T>(createDeathLog(), input);
+
+export const fetchServerDeathLogs = async <T>(serverId: number): Promise<T[]> =>
+  await createAwsSyncApiCall<T>(listServerDeathLogs(serverId));
