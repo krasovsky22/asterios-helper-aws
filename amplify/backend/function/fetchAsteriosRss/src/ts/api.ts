@@ -8,7 +8,7 @@ import {
   QueryType,
 } from "./queries";
 
-require("dotenv").config();
+// require("dotenv").config();
 
 type RequestDataType = {
   query: string;
@@ -26,8 +26,6 @@ const createAwsSyncApiCall = async <T>(
     query: print(query),
   };
 
-  console.log(print(query));
-
   if (input) {
     requestData.variables = { input };
   }
@@ -40,8 +38,6 @@ const createAwsSyncApiCall = async <T>(
     },
     data: requestData,
   });
-
-  console.log(queryName, data?.data, data?.data[queryName]);
 
   return data?.data[queryName]?.items ?? data?.data[queryName] ?? [];
 };

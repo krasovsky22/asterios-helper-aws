@@ -1,4 +1,5 @@
-import { APIGatewayProxyHandler, APIGatewayProxyEvent } from "aws-lambda";
+/* eslint-disable no-undef */
+import { APIGatewayProxyHandler } from "aws-lambda";
 import Parser from "rss-parser";
 import { v4 as uuid } from "uuid";
 import { fetchRaidBosses, fetchServerDeathLogs, fetchServers, persisDeathLog } from "./api";
@@ -13,54 +14,6 @@ ENV
 REGION
 Amplify Params - DO NOT EDIT */
 
-type ServerType = {
-  id: number;
-  enabled: boolean;
-  name: string;
-  asteriosId: number;
-};
-
-type RaidBossType = {
-  id: number;
-  name: string;
-  deathLogs: {
-    items: {
-      id: number;
-      isoDate: string;
-      serverId: number;
-      raidBossId: number;
-    }[];
-  };
-};
-
-type RaidBossDeathRecordType = {
-  id: string;
-  title: string;
-  link: string;
-  content: string;
-  isoDate: string;
-  serverId: number;
-  raidBossId: number;
-  contentSnippet: string;
-};
-
-type RaidBossDeathRssRecordType = {
-  title: string;
-  link: string;
-  pubDate: string;
-  content: string;
-  contentSnippet: string;
-  guid: string;
-  isoDate: string;
-};
-
-type ServerDeathLog = {
-  id: string;
-  isoDate: string;
-  raidBossId: string;
-  serverId: string;
-};
-
 const fetchRssFeed = async (serverId: number): Promise<RaidBossDeathRssRecordType[]> => {
   const URL = `https://asterios.tm/index.php?cmd=rss&serv=${serverId}&id=keyboss&out=xml`;
   const feed = await parser.parseURL(URL);
@@ -73,26 +26,55 @@ const fetchRssFeed = async (serverId: number): Promise<RaidBossDeathRssRecordTyp
   return items as RaidBossDeathRssRecordType[];
 };
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+// lambda function
+export const handler: APIGatewayProxyHandler = async () => {
+  //fetch configured server from dynamo db
   const servers = await fetchServers<ServerType>();
+  //fetch configured raidbosses
   const raidBosses = await fetchRaidBosses<RaidBossType>();
 
   servers.forEach(async (server: ServerType) => {
+    //fetch rss data from asterios website
     const rssFeedData = await fetchRssFeed(server.asteriosId);
+
+    //fetch death logs from dynamodb
     const deathLogs = await fetchServerDeathLogs<ServerDeathLog>(server.id);
-    console.log(deathLogs, server.id);
-    return;
 
     raidBosses.forEach(async (boss) => {
+      //find boss in data
       const rssFeedBossData = rssFeedData.find((item) => item.title?.includes(boss.name));
 
+      // move to next boss if not boss death rss logs
       if (!rssFeedBossData) {
         return;
       }
 
-      //if first death log, just insert it;
-      if (boss.deathLogs.items.length === 0) {
-        //remove keys we dont need
+      //find last stored death log
+      const lastDeathLog = deathLogs.find((log) => +boss.id === +log.raidBossId);
+
+      // its a first death log
+      if (!lastDeathLog) {
+        console.info(`No death logs detected for ${boss.name} on ${server.name}`);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { pubDate, guid, ...rest } = rssFeedBossData;
+
+        const log: RaidBossDeathRecordType = {
+          id: uuid(),
+          ...rest,
+          serverId: server.id,
+          raidBossId: boss.id,
+        };
+
+        return await persisDeathLog(log);
+      }
+
+      // compare to last death log
+      const lastLogDeathDate = new Date(lastDeathLog.isoDate);
+      const rssLogDate = new Date(rssFeedBossData.isoDate);
+
+      if (lastLogDeathDate < rssLogDate) {
+        console.info(`Inserting new death log for ${boss.name} on ${server.name}`);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { pubDate, guid, ...rest } = rssFeedBossData;
         const log: RaidBossDeathRecordType = {
           id: uuid(),
@@ -103,16 +85,12 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         return await persisDeathLog(log);
       }
 
-      console.log(boss.deathLogs.items);
-      //   const reportDate = new Date(rssFeedBossData.isoDate);
-      //   console.log(rssFeedBossData);
+      console.info(`Nothing new yet for ${boss.name} on ${server.name}`);
     });
   });
-  // TODO implement
-  const response = {
+
+  return {
     statusCode: 200,
     body: JSON.stringify("Done!"),
   };
-
-  return response;
 };

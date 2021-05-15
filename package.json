@@ -30,7 +30,7 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "BROWSER=firefox react-app-rewired start",
     "build": "env-cmd -f .env.production react-app-rewired build --env production",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",

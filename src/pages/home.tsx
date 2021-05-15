@@ -2,7 +2,7 @@ import { BossContainer, HeaderContainer } from "@/containers";
 import React, { useEffect } from "react";
 import styled from "styled-components/macro";
 import { API, graphqlOperation } from "aws-amplify";
-import { listRaidBosss, listServers } from "@graphql/queries";
+import { listRaidBosses, listServers } from "@graphql/queries";
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 
 const PageContainer = styled.div`

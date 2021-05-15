@@ -2,15 +2,15 @@ import { DocumentNode } from "graphql";
 import gql from "graphql-tag";
 
 export type QueryType = {
-  query: DocumentNode;
   queryName: string;
+  query: DocumentNode;
 };
 
 export const listServerDeathLogs = (serverId: number): QueryType => ({
-  queryName: "listByIsoDate:",
+  queryName: "listByIsoDate",
   query: gql`
         query serverDeathLogs {
-        listByIsoDate(serverId: ${serverId}, sortDirection: DESC) {
+        listByIsoDate(serverId: ${serverId}, sortDirection: DESC, limit: 10) {
             items {
                 id
                 isoDate
@@ -23,6 +23,7 @@ export const listServerDeathLogs = (serverId: number): QueryType => ({
 });
 
 export const listServers = (): QueryType => ({
+  queryName: "listServers",
   query: gql`
     query listEnabledServers {
       listServers(filter: { enabled: { eq: true } }) {
@@ -35,10 +36,10 @@ export const listServers = (): QueryType => ({
       }
     }
   `,
-  queryName: "listServers",
 });
 
 export const listRaidBosses = (): QueryType => ({
+  queryName: "listRaidBosses",
   query: gql`
     query listRaidBosses {
       listRaidBosses {
@@ -49,10 +50,10 @@ export const listRaidBosses = (): QueryType => ({
       }
     }
   `,
-  queryName: "listRaidBosses",
 });
 
 export const createDeathLog = (): QueryType => ({
+  queryName: "createServerRaidbossDeathLogs",
   query: gql`
     mutation createDeathLog($input: CreateServerRaidbossDeathLogsInput!) {
       createServerRaidbossDeathLogs(input: $input) {
@@ -60,5 +61,4 @@ export const createDeathLog = (): QueryType => ({
       }
     }
   `,
-  queryName: "createServerRaidbossDeathLogs",
 });
