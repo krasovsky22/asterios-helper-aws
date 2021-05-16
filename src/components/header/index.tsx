@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useInterval } from "beautiful-react-hooks";
 import { WithChildrenType, ImageType } from "@components/common-types";
+import Select from "react-select";
 import {
   Container,
   Inner,
@@ -10,6 +11,7 @@ import {
   SignUpButton,
   Clock,
   LoggedInUser,
+  SelectContainer,
 } from "./styles/header";
 
 const Header = ({ children, ...rest }: WithChildrenType) => {
@@ -17,6 +19,28 @@ const Header = ({ children, ...rest }: WithChildrenType) => {
     <Container {...rest}>
       <Inner>{children}</Inner>
     </Container>
+  );
+};
+
+type ServerSelectOption = {
+  value: number;
+  label: string;
+};
+
+type ServerSelectType = {
+  servers: ServerSelectOption[];
+  defaultValue?: ServerSelectOption;
+  onServerSelect: (arg: number) => void;
+};
+Header.ServerSelect = ({ servers, onServerSelect, defaultValue }: ServerSelectType) => {
+  const onChange = (selectedOption: ServerSelectOption | null) => {
+    selectedOption && onServerSelect(selectedOption.value);
+  };
+
+  return (
+    <SelectContainer>
+      <Select className="w-100" options={servers} onChange={onChange} defaultValue={defaultValue} />
+    </SelectContainer>
   );
 };
 

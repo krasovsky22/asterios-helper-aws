@@ -1,6 +1,6 @@
 import { AuthenticateCallback, Home } from "@/pages";
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -13,8 +13,11 @@ const App: React.FC = () => {
           <Route exact path="/authenticate-callback">
             <AuthenticateCallback />
           </Route>
-          <Route exact path="/">
+          <Route path="/server">
             <Home />
+          </Route>
+          <Route path="/">
+            <Redirect to="/server" />
           </Route>
         </Switch>
       </Router>

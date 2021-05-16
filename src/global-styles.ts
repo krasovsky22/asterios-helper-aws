@@ -18,6 +18,10 @@ const GlobalStyles = createGlobalStyle`
   a {
        text-decoration: none;
     }
+
+    .w-100{
+        width: 100%;
+    }
 `;
 
 export default GlobalStyles;
