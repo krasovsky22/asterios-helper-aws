@@ -1,13 +1,7 @@
 // @ts-check
-import { initSchema } from '@aws-amplify/datastore';
-import { schema } from './schema';
+import { initSchema } from "@aws-amplify/datastore";
+import { schema } from "./schema";
 
+const { ServerRaidbossDeathLogs, Server, RaidBoss } = initSchema(schema);
 
-
-const { Server, ServerRaidbossDeathLogs, RaidBoss } = initSchema(schema);
-
-export {
-  Server,
-  ServerRaidbossDeathLogs,
-  RaidBoss
-};
+export { ServerRaidbossDeathLogs, Server, RaidBoss };

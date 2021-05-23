@@ -1,4 +1,4 @@
-import subscribeGraphQL from "@api/subscribeGraphQL";
+import subscribeGraphQL, { GraphQLOptions } from "@api/subscribeGraphQL";
 import { useHomeContext } from "@/context/home";
 import { onCreateDeathLog } from "@/graphql/raidboss-log-subscription";
 import React, { useEffect } from "react";
@@ -39,6 +39,7 @@ const ServerBossesContainer: React.FC = () => {
   const { bosses } = useHomeContext();
 
   useEffect(() => {
+    console.log("id", id);
     const subscription = subscribeGraphQL<{
       provider: unknown;
       value: OnCreateDeathLogSubscription;
@@ -52,7 +53,10 @@ const ServerBossesContainer: React.FC = () => {
         },
       });
 
-      unsubscribe = () => sub.unsubscribe();
+      unsubscribe = () => {
+        console.log("unsubscribing");
+        sub.unsubscribe();
+      };
     }
     return unsubscribe;
   }, [id]);

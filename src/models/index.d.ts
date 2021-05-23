@@ -1,19 +1,5 @@
 import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
 
-
-
-
-
-export declare class Server {
-  readonly id: string;
-  readonly asteriosId: string;
-  readonly name: string;
-  readonly enabled: boolean;
-  readonly bosses?: (ServerRaidbossDeathLogs | null)[];
-  constructor(init: ModelInit<Server>);
-  static copyOf(source: Server, mutator: (draft: MutableModel<Server>) => MutableModel<Server> | void): Server;
-}
-
 export declare class ServerRaidbossDeathLogs {
   readonly id: string;
   readonly isoDate?: string;
@@ -24,7 +10,25 @@ export declare class ServerRaidbossDeathLogs {
   readonly server: Server;
   readonly raidBoss: RaidBoss;
   constructor(init: ModelInit<ServerRaidbossDeathLogs>);
-  static copyOf(source: ServerRaidbossDeathLogs, mutator: (draft: MutableModel<ServerRaidbossDeathLogs>) => MutableModel<ServerRaidbossDeathLogs> | void): ServerRaidbossDeathLogs;
+  static copyOf(
+    source: ServerRaidbossDeathLogs,
+    mutator: (
+      draft: MutableModel<ServerRaidbossDeathLogs>,
+    ) => MutableModel<ServerRaidbossDeathLogs> | void,
+  ): ServerRaidbossDeathLogs;
+}
+
+export declare class Server {
+  readonly id: string;
+  readonly asteriosId: string;
+  readonly name: string;
+  readonly enabled: boolean;
+  readonly bosses?: (ServerRaidbossDeathLogs | null)[];
+  constructor(init: ModelInit<Server>);
+  static copyOf(
+    source: Server,
+    mutator: (draft: MutableModel<Server>) => MutableModel<Server> | void,
+  ): Server;
 }
 
 export declare class RaidBoss {
@@ -35,5 +39,8 @@ export declare class RaidBoss {
   readonly chest?: string;
   readonly deathLogs?: (ServerRaidbossDeathLogs | null)[];
   constructor(init: ModelInit<RaidBoss>);
-  static copyOf(source: RaidBoss, mutator: (draft: MutableModel<RaidBoss>) => MutableModel<RaidBoss> | void): RaidBoss;
+  static copyOf(
+    source: RaidBoss,
+    mutator: (draft: MutableModel<RaidBoss>) => MutableModel<RaidBoss> | void,
+  ): RaidBoss;
 }
