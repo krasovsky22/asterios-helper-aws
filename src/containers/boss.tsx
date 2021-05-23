@@ -7,7 +7,7 @@ import { useInterval } from "beautiful-react-hooks";
 import { useAuthContext } from "@context/auth";
 
 type BossContainerType = {
-  name: BOSS_TYPE;
+  name: string;
   image: string;
   chest: string;
   floor?: number;
@@ -23,23 +23,44 @@ const DefaultState: StateType = {
   isSpawned: false,
 };
 
+type BossSnapshotDataType = {
+  content: string;
+  contentSnippet: string;
+  guid: string;
+  isoDate: string;
+  link: string;
+  pubDate: string;
+  title: string;
+  markedAsSpawned?: string[];
+};
+
 const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor = null }) => {
   const [state, setState] = useState<StateType>(DefaultState);
-  const { bossData, markBossAsSpawned } = useContent(name)!;
+  const bossData: BossSnapshotDataType = {
+    content: "",
+    contentSnippet: "",
+    guid: "",
+    isoDate: "",
+    link: "string",
+    pubDate: "string",
+    title: "string",
+  };
+  //   const { bossData, markBossAsSpawned } = useContent(name)!;
+
   const { user } = useAuthContext();
 
-  let isReported = false;
-  if (bossData) {
-    const { markedAsSpawned } = bossData;
+  const isReported = false;
+  //   if (bossData) {
+  //     const { markedAsSpawned } = bossData;
 
-    if (markedAsSpawned) {
-      if (user) {
-        isReported = markedAsSpawned.filter((userReported) => userReported !== user.id).length > 0;
-      } else {
-        isReported = markBossAsSpawned.length > 0;
-      }
-    }
-  }
+  //     if (markedAsSpawned) {
+  //       if (user) {
+  //         isReported = markedAsSpawned.filter((userReported) => userReported !== user.id).length > 0;
+  //       } else {
+  //         isReported = markBossAsSpawned.length > 0;
+  //       }
+  //     }
+  //   }
 
   //copy into clipboard
   const handleOnClick = useCallback(() => {
@@ -82,33 +103,29 @@ const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor 
     setState(DefaultState);
   }, 1000);
 
-  const handleMarkAsSpawned = useCallback(async () => {
-    if (!state.isSpawning) {
-      return toast.error(
-        <div>
-          <b>Boss hasn't spawned yet!</b> <br />
-          Penalties may apply.
-        </div>,
-      );
-    }
+  //   const handleMarkAsSpawned = useCallback(async () => {
+  //     if (!state.isSpawning) {
+  //       return toast.error(
+  //         <div>
+  //           <b>Boss hasn't spawned yet!</b> <br />
+  //           Penalties may apply.
+  //         </div>,
+  //       );
+  //     }
 
-    const result = await markBossAsSpawned();
+  //     const result = await markBossAsSpawned();
 
-    if (result) {
-      return toast.success(
-        <div>
-          <b>Thank you!</b>
-        </div>,
-      );
-    }
-  }, [bossData, state.isSpawning]);
-
-  if (!bossData) {
-    return null;
-  }
+  //     if (result) {
+  //       return toast.success(
+  //         <div>
+  //           <b>Thank you!</b>
+  //         </div>,
+  //       );
+  //     }
+  //   }, [bossData, state.isSpawning]);
 
   const { isSpawned, isSpawning } = state;
-  const isMarkedSpawnedByMe = bossData.markedAsSpawned?.includes(user?.id ?? "") ?? false;
+  //const isMarkedSpawnedByMe = bossData?.markedAsSpawned?.includes(user?.id ?? "") ?? false;
   let color = "black";
 
   if (isSpawning) {
@@ -136,15 +153,15 @@ const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor 
             {killedAt.toLocaleDateString()} {killedAt.toLocaleTimeString()}
           </p>
         </BossCard.DeathSection>
-        <BossCard.DeathInfo>{bossData.content}</BossCard.DeathInfo>
-        {user && isSpawning && (
+        {/* <BossCard.DeathInfo>{bossData.content}</BossCard.DeathInfo> */}
+        {/* {user && isSpawning && (
           <BossCard.ActionButtonsSection
             isToggled={isMarkedSpawnedByMe}
             onClick={handleMarkAsSpawned}
           >
             {isMarkedSpawnedByMe ? "Notified!" : "Mark as spawned."}
           </BossCard.ActionButtonsSection>
-        )}
+        )} */}
         <BossCard.RespawnSection>
           <div>
             <b>Start Time:</b> {respawnStartTime.toLocaleString()}

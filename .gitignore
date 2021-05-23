@@ -117,3 +117,4 @@ amplifytools.xcconfig
 .secret-*
 
 amplify/backend/api/asteriosAPI/resolvers/*
+amplify/team-provider-info.json

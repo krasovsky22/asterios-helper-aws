@@ -58,6 +58,13 @@ export const createDeathLog = (): QueryType => ({
     mutation createDeathLog($input: CreateServerRaidbossDeathLogsInput!) {
       createServerRaidbossDeathLogs(input: $input) {
         id
+        isoDate
+        content
+        contentSnippet
+        link
+        title
+        serverId
+        raidBossId
       }
     }
   `,

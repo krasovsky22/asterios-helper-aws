@@ -54,15 +54,15 @@ const servers = [
 ];
 
 (async () => {
-  await Promise.all(
-    servers.map(async (server, index) =>
-      API.graphql(
-        graphqlOperation(createServer, {
-          input: { ...server, id: index },
-        }),
-      ),
-    ),
-  );
+  //   await Promise.allSettled(
+  //     servers.map(async (server, index) =>
+  //       API.graphql(
+  //         graphqlOperation(createServer, {
+  //           input: { ...server, id: index },
+  //         }),
+  //       ),
+  //     ),
+  //   );
   BossNames.forEach(
     async (boss, index) =>
       await API.graphql(

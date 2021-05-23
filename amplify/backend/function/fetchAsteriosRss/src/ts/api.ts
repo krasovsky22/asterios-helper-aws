@@ -30,14 +30,22 @@ const createAwsSyncApiCall = async <T>(
     requestData.variables = { input };
   }
 
-  const { data } = await axios({
+  const response = await axios({
     url: process.env.API_ASTERIOSAPI_GRAPHQLAPIENDPOINTOUTPUT,
     method: "post",
     headers: {
       "x-api-key": process.env.API_ASTERIOSAPI_GRAPHQLAPIKEYOUTPUT,
     },
     data: requestData,
+  }).catch((error) => {
+    console.error(error);
+    return error;
   });
+
+  const { data } = response;
+  if (data.errors) {
+    console.log("errors:", data.errors);
+  }
 
   return data?.data[queryName]?.items ?? data?.data[queryName] ?? [];
 };

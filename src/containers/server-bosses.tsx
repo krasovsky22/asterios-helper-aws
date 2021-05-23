@@ -1,5 +1,11 @@
-import React from "react";
+import subscribeGraphQL from "@api/subscribeGraphQL";
+import { useHomeContext } from "@/context/home";
+import { onCreateDeathLog } from "@/graphql/raidboss-log-subscription";
+import React, { useEffect } from "react";
+import { useParams } from "react-router";
 import styled from "styled-components/macro";
+import BossContainer from "./boss";
+import { OnCreateDeathLogSubscription } from "@/api/AWSApi";
 
 const ContentContainer = styled.div`
   display: flex;
@@ -23,10 +29,41 @@ const Inner = styled.div`
   justify-content: space-evenly;
 `;
 
+type HomeRouteParamsType = {
+  id: string;
+};
+
 const ServerBossesContainer: React.FC = () => {
+  const { id } = useParams<HomeRouteParamsType>()!;
+
+  const { bosses } = useHomeContext();
+
+  useEffect(() => {
+    const subscription = subscribeGraphQL<{
+      provider: unknown;
+      value: OnCreateDeathLogSubscription;
+    }>(onCreateDeathLog);
+    let unsubscribe;
+
+    if (subscription !== null) {
+      const sub = subscription.subscribe({
+        next: ({ provider, value }) => {
+          console.log("asdasd", { provider, value });
+        },
+      });
+
+      unsubscribe = () => sub.unsubscribe();
+    }
+    return unsubscribe;
+  }, [id]);
+
+  console.log(bosses);
   return (
     <ContentContainer>
       <Inner>
+        {bosses.map((boss) => (
+          <BossContainer key={boss.id} {...boss} />
+        ))}
         {/* <BossContainer
             name="Boss Shilen's Messenger Cabrio"
             image="/images/Cabrio.jpg"

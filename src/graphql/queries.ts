@@ -3,11 +3,7 @@
 // this is an auto generated file. This will be overwritten
 
 export const listServers = /* GraphQL */ `
-  query ListServers(
-    $filter: ModelServerFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
+  query ListServers($filter: ModelServerFilterInput, $limit: Int, $nextToken: String) {
     listServers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
@@ -36,12 +32,7 @@ export const syncServers = /* GraphQL */ `
     $nextToken: String
     $lastSync: AWSTimestamp
   ) {
-    syncServers(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
+    syncServers(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
       items {
         id
         asteriosId
@@ -53,34 +44,6 @@ export const syncServers = /* GraphQL */ `
         createdAt
         updatedAt
         bosses {
-          nextToken
-          startedAt
-        }
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const listRaidBosses = /* GraphQL */ `
-  query ListRaidBosses(
-    $filter: ModelRaidBossFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listRaidBosses(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        floor
-        image
-        chest
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-        deathLogs {
           nextToken
           startedAt
         }
@@ -125,6 +88,30 @@ export const getRaidBoss = /* GraphQL */ `
     }
   }
 `;
+export const listRaidBosses = /* GraphQL */ `
+  query ListRaidBosses($filter: ModelRaidBossFilterInput, $limit: Int, $nextToken: String) {
+    listRaidBosses(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        floor
+        image
+        chest
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+        deathLogs {
+          nextToken
+          startedAt
+        }
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const syncRaidBosses = /* GraphQL */ `
   query SyncRaidBosses(
     $filter: ModelRaidBossFilterInput
@@ -132,12 +119,7 @@ export const syncRaidBosses = /* GraphQL */ `
     $nextToken: String
     $lastSync: AWSTimestamp
   ) {
-    syncRaidBosses(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
+    syncRaidBosses(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
       items {
         id
         name
@@ -165,11 +147,7 @@ export const listServerRaidbossDeathLogs = /* GraphQL */ `
     $limit: Int
     $nextToken: String
   ) {
-    listServerRaidbossDeathLogs(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
+    listServerRaidbossDeathLogs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         isoDate

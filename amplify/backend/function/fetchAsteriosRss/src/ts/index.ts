@@ -30,23 +30,28 @@ const fetchRssFeed = async (serverId: number): Promise<RaidBossDeathRssRecordTyp
 export const handler: APIGatewayProxyHandler = async () => {
   //fetch configured server from dynamo db
   const servers = await fetchServers<ServerType>();
+
   //fetch configured raidbosses
   const raidBosses = await fetchRaidBosses<RaidBossType>();
 
-  servers.forEach(async (server: ServerType) => {
+  //keep the list of promises to await
+  for (let i = 0; i < servers.length; i++) {
+    const server = servers[i];
     //fetch rss data from asterios website
     const rssFeedData = await fetchRssFeed(server.asteriosId);
 
     //fetch death logs from dynamodb
     const deathLogs = await fetchServerDeathLogs<ServerDeathLog>(server.id);
 
-    raidBosses.forEach(async (boss) => {
+    for (let k = 0; k < raidBosses.length; k++) {
+      const boss = raidBosses[k];
       //find boss in data
       const rssFeedBossData = rssFeedData.find((item) => item.title?.includes(boss.name));
 
       // move to next boss if not boss death rss logs
       if (!rssFeedBossData) {
-        return;
+        console.log("unable to find rss boss data");
+        continue;
       }
 
       //find last stored death log
@@ -54,7 +59,7 @@ export const handler: APIGatewayProxyHandler = async () => {
 
       // its a first death log
       if (!lastDeathLog) {
-        console.info(`No death logs detected for ${boss.name} on ${server.name}`);
+        console.log(`No death logs detected for ${boss.name} on ${server.name}`);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { pubDate, guid, ...rest } = rssFeedBossData;
 
@@ -65,7 +70,8 @@ export const handler: APIGatewayProxyHandler = async () => {
           raidBossId: boss.id,
         };
 
-        return await persisDeathLog(log);
+        await persisDeathLog(log);
+        continue;
       }
 
       // compare to last death log
@@ -73,7 +79,7 @@ export const handler: APIGatewayProxyHandler = async () => {
       const rssLogDate = new Date(rssFeedBossData.isoDate);
 
       if (lastLogDeathDate < rssLogDate) {
-        console.info(`Inserting new death log for ${boss.name} on ${server.name}`);
+        console.info(`Inserting new death log for ${boss.name} on ${server.name} `);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { pubDate, guid, ...rest } = rssFeedBossData;
         const log: RaidBossDeathRecordType = {
@@ -82,12 +88,13 @@ export const handler: APIGatewayProxyHandler = async () => {
           serverId: server.id,
           raidBossId: boss.id,
         };
-        return await persisDeathLog(log);
+        await persisDeathLog(log);
+        continue;
       }
 
       console.info(`Nothing new yet for ${boss.name} on ${server.name}`);
-    });
-  });
+    }
+  }
 
   return {
     statusCode: 200,

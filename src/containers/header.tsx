@@ -13,7 +13,6 @@ const HeaderContainer: React.FC = () => {
   const { id = 0 } = useParams<{ id?: string }>();
 
   const onServerSelect = (serverId: number) => {
-    console.log("selected", serverId);
     history.push(`${serverId}`);
   };
 

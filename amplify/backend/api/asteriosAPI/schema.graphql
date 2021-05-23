@@ -1,5 +1,10 @@
 type Server
   @model(queries: { list: "listServers" }, mutations: null, subscriptions: null)
+  #   @model(
+  #     queries: { list: "listServers" }
+  #     mutations: { create: "createServer" }
+  #     subscriptions: null
+  #   )
   @auth(
     rules: [
       { allow: public, provider: apiKey, operations: [read] }
@@ -19,6 +24,11 @@ type RaidBoss
     mutations: null
     subscriptions: null
   )
+  #   @model(
+  #     queries: { list: "listRaidBosses", get: "getRaidBoss" }
+  #     mutations: { create: "createRaidBoss" }
+  #     subscriptions: null
+  #   )
   @auth(
     rules: [
       { allow: public, provider: apiKey, operations: [read] }
