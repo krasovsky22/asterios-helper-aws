@@ -2,7 +2,7 @@ import { HeaderContainer, ServerBossesContainer } from "@/containers";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Switch, useRouteMatch, Route } from "react-router-dom";
+import { Switch, useRouteMatch, Route, Redirect } from "react-router-dom";
 
 import { HomeStateProvider } from "@context/home";
 
@@ -14,6 +14,7 @@ const PageContainer = styled.div`
 
 const Home: React.FC = () => {
   const { url } = useRouteMatch();
+
   return (
     <HomeStateProvider>
       <PageContainer>
@@ -21,6 +22,9 @@ const Home: React.FC = () => {
           <Route exact path={`${url}/:id`}>
             <HeaderContainer />
             <ServerBossesContainer />
+          </Route>
+          <Route path="/">
+            <Redirect to={`${url}/0`} />
           </Route>
         </Switch>
       </PageContainer>

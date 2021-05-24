@@ -59,7 +59,6 @@ const BossContainer: React.FC<BossContainerType> = ({
   //if new date passed from subscriber, reset the state to start over
   useEffect(() => {
     if (bossData.isoDate) {
-      console.log("resetting state");
       setState(DefaultState);
     }
   }, [bossData.isoDate]);
