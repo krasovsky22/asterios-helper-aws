@@ -18,7 +18,7 @@
       "function": {
         "fetchAsteriosRss": {
           "deploymentBucketName": "amplify-asterios-dev-211036-deployment",
-          "s3Key": "amplify-builds/fetchAsteriosRss-4e4562386b6673567370-build.zip"
+          "s3Key": "amplify-builds/fetchAsteriosRss-5967354e426131466b59-build.zip"
         }
       }
     }

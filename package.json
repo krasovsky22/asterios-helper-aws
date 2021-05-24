@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "BROWSER=firefox react-app-rewired start",
-    "build": "env-cmd -f .env.production react-app-rewired build --env production",
+    "build": "react-app-rewired build --env production",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "format": "prettier --write src/**/*.ts{,x}",

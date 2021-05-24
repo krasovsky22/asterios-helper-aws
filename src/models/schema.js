@@ -1,5 +1,83 @@
 export const schema = {
   models: {
+    Server: {
+      name: "Server",
+      fields: {
+        id: {
+          name: "id",
+          isArray: false,
+          type: "ID",
+          isRequired: true,
+          attributes: [],
+        },
+        asteriosId: {
+          name: "asteriosId",
+          isArray: false,
+          type: "ID",
+          isRequired: true,
+          attributes: [],
+        },
+        name: {
+          name: "name",
+          isArray: false,
+          type: "String",
+          isRequired: true,
+          attributes: [],
+        },
+        enabled: {
+          name: "enabled",
+          isArray: false,
+          type: "Boolean",
+          isRequired: true,
+          attributes: [],
+        },
+        bosses: {
+          name: "bosses",
+          isArray: true,
+          type: {
+            model: "ServerRaidbossDeathLogs",
+          },
+          isRequired: false,
+          attributes: [],
+          isArrayNullable: true,
+          association: {
+            connectionType: "HAS_MANY",
+            associatedWith: "server",
+          },
+        },
+      },
+      syncable: true,
+      pluralName: "Servers",
+      attributes: [
+        {
+          type: "model",
+          properties: {
+            queries: {
+              list: "listServers",
+            },
+            mutations: null,
+            subscriptions: null,
+          },
+        },
+        {
+          type: "auth",
+          properties: {
+            rules: [
+              {
+                allow: "public",
+                provider: "apiKey",
+                operations: ["read"],
+              },
+              {
+                allow: "public",
+                provider: "iam",
+                operations: ["read"],
+              },
+            ],
+          },
+        },
+      ],
+    },
     ServerRaidbossDeathLogs: {
       name: "ServerRaidbossDeathLogs",
       fields: {
@@ -119,84 +197,6 @@ export const schema = {
                 allow: "public",
                 provider: "apiKey",
                 operations: ["create", "update", "delete", "read"],
-              },
-              {
-                allow: "public",
-                provider: "iam",
-                operations: ["read"],
-              },
-            ],
-          },
-        },
-      ],
-    },
-    Server: {
-      name: "Server",
-      fields: {
-        id: {
-          name: "id",
-          isArray: false,
-          type: "ID",
-          isRequired: true,
-          attributes: [],
-        },
-        asteriosId: {
-          name: "asteriosId",
-          isArray: false,
-          type: "ID",
-          isRequired: true,
-          attributes: [],
-        },
-        name: {
-          name: "name",
-          isArray: false,
-          type: "String",
-          isRequired: true,
-          attributes: [],
-        },
-        enabled: {
-          name: "enabled",
-          isArray: false,
-          type: "Boolean",
-          isRequired: true,
-          attributes: [],
-        },
-        bosses: {
-          name: "bosses",
-          isArray: true,
-          type: {
-            model: "ServerRaidbossDeathLogs",
-          },
-          isRequired: false,
-          attributes: [],
-          isArrayNullable: true,
-          association: {
-            connectionType: "HAS_MANY",
-            associatedWith: "server",
-          },
-        },
-      },
-      syncable: true,
-      pluralName: "Servers",
-      attributes: [
-        {
-          type: "model",
-          properties: {
-            queries: {
-              list: "listServers",
-            },
-            mutations: null,
-            subscriptions: null,
-          },
-        },
-        {
-          type: "auth",
-          properties: {
-            rules: [
-              {
-                allow: "public",
-                provider: "apiKey",
-                operations: ["read"],
               },
               {
                 allow: "public",

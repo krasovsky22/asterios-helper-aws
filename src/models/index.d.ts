@@ -1,5 +1,18 @@
 import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
 
+export declare class Server {
+  readonly id: string;
+  readonly asteriosId: string;
+  readonly name: string;
+  readonly enabled: boolean;
+  readonly bosses?: (ServerRaidbossDeathLogs | null)[];
+  constructor(init: ModelInit<Server>);
+  static copyOf(
+    source: Server,
+    mutator: (draft: MutableModel<Server>) => MutableModel<Server> | void,
+  ): Server;
+}
+
 export declare class ServerRaidbossDeathLogs {
   readonly id: string;
   readonly isoDate?: string;
@@ -16,19 +29,6 @@ export declare class ServerRaidbossDeathLogs {
       draft: MutableModel<ServerRaidbossDeathLogs>,
     ) => MutableModel<ServerRaidbossDeathLogs> | void,
   ): ServerRaidbossDeathLogs;
-}
-
-export declare class Server {
-  readonly id: string;
-  readonly asteriosId: string;
-  readonly name: string;
-  readonly enabled: boolean;
-  readonly bosses?: (ServerRaidbossDeathLogs | null)[];
-  constructor(init: ModelInit<Server>);
-  static copyOf(
-    source: Server,
-    mutator: (draft: MutableModel<Server>) => MutableModel<Server> | void,
-  ): Server;
 }
 
 export declare class RaidBoss {
