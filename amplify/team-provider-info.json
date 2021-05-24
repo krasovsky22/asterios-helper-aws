@@ -40,7 +40,10 @@
         "asteriosda3ac12b": {}
       },
       "function": {
-        "fetchAsteriosRss": {}
+        "fetchAsteriosRss": {
+          "deploymentBucketName": "amplify-asterios-prod-200737-deployment",
+          "s3Key": "amplify-builds/fetchAsteriosRss-5967354e426131466b59-build.zip"
+        }
       }
     }
   }
