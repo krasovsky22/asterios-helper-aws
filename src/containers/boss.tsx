@@ -1,16 +1,21 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BossCard } from "@/components";
-import useContent from "@hooks/use-content";
-import { BOSS_TYPE } from "@constants/bosses";
 import { toast } from "react-toastify";
 import { useInterval } from "beautiful-react-hooks";
-import { useAuthContext } from "@context/auth";
 
 type BossContainerType = {
+  // boss specific
   name: string;
   image: string;
   chest: string;
   floor?: number;
+
+  // death log content
+  content?: string;
+  contentSnippet?: string;
+  isoDate?: string;
+  link?: string;
+  title?: string;
 };
 
 type StateType = {
@@ -23,31 +28,41 @@ const DefaultState: StateType = {
   isSpawned: false,
 };
 
-type BossSnapshotDataType = {
-  content: string;
-  contentSnippet: string;
-  guid: string;
-  isoDate: string;
-  link: string;
-  pubDate: string;
-  title: string;
-  markedAsSpawned?: string[];
-};
-
-const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor = null }) => {
+const BossContainer: React.FC<BossContainerType> = ({
+  chest,
+  name,
+  image,
+  floor = null,
+  ...bossData
+}) => {
   const [state, setState] = useState<StateType>(DefaultState);
-  const bossData: BossSnapshotDataType = {
-    content: "",
-    contentSnippet: "",
-    guid: "",
-    isoDate: "",
-    link: "string",
-    pubDate: "string",
-    title: "string",
-  };
-  //   const { bossData, markBossAsSpawned } = useContent(name)!;
+  // memorize calculated respawn end time and start time
+  const calculatedDeathDates = useMemo(() => {
+    if (!bossData.isoDate) {
+      return {};
+    }
 
-  const { user } = useAuthContext();
+    const killedAt = new Date(bossData.isoDate);
+    const respawnStartTime = new Date(bossData.isoDate);
+    respawnStartTime.setTime(killedAt.getTime() + 18 * 60 * 60 * 1000);
+
+    const respawnEndTime = new Date(bossData.isoDate);
+    respawnEndTime.setTime(killedAt.getTime() + 30 * 60 * 60 * 1000);
+
+    return {
+      killedAt,
+      respawnStartTime,
+      respawnEndTime,
+    };
+  }, [bossData.isoDate]);
+
+  //if new date passed from subscriber, reset the state to start over
+  useEffect(() => {
+    if (bossData.isoDate) {
+      console.log("resetting state");
+      setState(DefaultState);
+    }
+  }, [bossData.isoDate]);
 
   const isReported = false;
   //   if (bossData) {
@@ -80,23 +95,23 @@ const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor 
     );
   }, []);
 
-  const killedAt = new Date(bossData?.pubDate ?? "");
-  const respawnStartTime = new Date(bossData?.pubDate ?? "");
-
-  respawnStartTime.setTime(killedAt.getTime() + 18 * 60 * 60 * 1000);
-
-  const respawnEndTime = new Date(bossData?.pubDate ?? "");
-  respawnEndTime.setTime(killedAt.getTime() + 30 * 60 * 60 * 1000);
-
+  // time to check if spawning started
   useInterval(() => {
     const now = new Date();
 
-    if (now > respawnStartTime && now < respawnEndTime) {
-      setState({ ...state, isSpawning: true });
+    if (!calculatedDeathDates.respawnEndTime || !calculatedDeathDates.respawnEndTime) {
       return;
     }
+
+    const { respawnStartTime, respawnEndTime } = calculatedDeathDates;
+
+    if (now > respawnStartTime && now < respawnEndTime) {
+      setState((prevState) => ({ ...prevState, isSpawning: true }));
+      return;
+    }
+
     if (now > respawnEndTime) {
-      setState({ ...state, isSpawning: false, isSpawned: true });
+      setState((prevState) => ({ ...prevState, isSpawning: false, isSpawned: true }));
       return;
     }
 
@@ -136,6 +151,8 @@ const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor 
     color = "green";
   }
 
+  const { killedAt, respawnStartTime, respawnEndTime } = calculatedDeathDates;
+
   return (
     <BossCard title="Copy" onClick={handleOnClick} isActive={isReported}>
       <BossCard.Image src={image} alt={name}>
@@ -147,13 +164,15 @@ const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor 
         color={isSpawning || isSpawned ? "black" : undefined}
       >
         <BossCard.Title>{name}</BossCard.Title>
-        <BossCard.DeathSection>
-          <b>Killed at:</b>{" "}
-          <p>
-            {killedAt.toLocaleDateString()} {killedAt.toLocaleTimeString()}
-          </p>
-        </BossCard.DeathSection>
-        {/* <BossCard.DeathInfo>{bossData.content}</BossCard.DeathInfo> */}
+        {killedAt && (
+          <BossCard.DeathSection>
+            <b>Killed at:</b>{" "}
+            <p>
+              {killedAt.toLocaleDateString()} {killedAt.toLocaleTimeString()}
+            </p>
+          </BossCard.DeathSection>
+        )}
+        <BossCard.DeathInfo>{bossData.content}</BossCard.DeathInfo>
         {/* {user && isSpawning && (
           <BossCard.ActionButtonsSection
             isToggled={isMarkedSpawnedByMe}
@@ -162,14 +181,16 @@ const BossContainer: React.FC<BossContainerType> = ({ chest, name, image, floor 
             {isMarkedSpawnedByMe ? "Notified!" : "Mark as spawned."}
           </BossCard.ActionButtonsSection>
         )} */}
-        <BossCard.RespawnSection>
-          <div>
-            <b>Start Time:</b> {respawnStartTime.toLocaleString()}
-          </div>
-          <div>
-            <b>Until:</b> {respawnEndTime.toLocaleString()}
-          </div>
-        </BossCard.RespawnSection>
+        {respawnStartTime && respawnEndTime && (
+          <BossCard.RespawnSection>
+            <div>
+              <b>Start Time:</b> {respawnStartTime.toLocaleString()}
+            </div>
+            <div>
+              <b>Until:</b> {respawnEndTime.toLocaleString()}
+            </div>
+          </BossCard.RespawnSection>
+        )}
       </BossCard.Content>
     </BossCard>
   );

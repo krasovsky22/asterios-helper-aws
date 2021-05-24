@@ -1,11 +1,9 @@
-import subscribeGraphQL, { GraphQLOptions } from "@api/subscribeGraphQL";
 import { useHomeContext } from "@/context/home";
-import { onCreateDeathLog } from "@/graphql/raidboss-log-subscription";
-import React, { useEffect } from "react";
+import { useServerDeathLogs } from "@/hooks";
+import React from "react";
 import { useParams } from "react-router";
 import styled from "styled-components/macro";
 import BossContainer from "./boss";
-import { OnCreateDeathLogSubscription } from "@/api/AWSApi";
 
 const ContentContainer = styled.div`
   display: flex;
@@ -35,62 +33,19 @@ type HomeRouteParamsType = {
 
 const ServerBossesContainer: React.FC = () => {
   const { id } = useParams<HomeRouteParamsType>()!;
-
   const { bosses } = useHomeContext();
+  const deathLogs = useServerDeathLogs(+id);
 
-  useEffect(() => {
-    console.log("id", id);
-    const subscription = subscribeGraphQL<{
-      provider: unknown;
-      value: OnCreateDeathLogSubscription;
-    }>(onCreateDeathLog);
-    let unsubscribe;
-
-    if (subscription !== null) {
-      const sub = subscription.subscribe({
-        next: ({ provider, value }) => {
-          console.log("asdasd", { provider, value });
-        },
-      });
-
-      unsubscribe = () => {
-        console.log("unsubscribing");
-        sub.unsubscribe();
-      };
-    }
-    return unsubscribe;
-  }, [id]);
-
-  console.log(bosses);
   return (
     <ContentContainer>
       <Inner>
         {bosses.map((boss) => (
-          <BossContainer key={boss.id} {...boss} />
+          <BossContainer
+            key={boss.id}
+            {...boss}
+            {...deathLogs.find((log) => +log.raidBossId === +boss.id)}
+          />
         ))}
-        {/* <BossContainer
-            name="Boss Shilen's Messenger Cabrio"
-            image="/images/Cabrio.jpg"
-            chest="/target Coffer of the Dead"
-          />
-          <BossContainer
-            name="Boss Death Lord Hallate"
-            image="/images/Hallate.jpg"
-            chest="/target Hallate's chest"
-            floor={3}
-          />
-          <BossContainer
-            name="Boss Kernon"
-            image="/images/Kernon.jpg"
-            chest="/target Chest of Kernon"
-            floor={8}
-          />
-          <BossContainer
-            name="Boss Longhorn Golkonda"
-            image="/images/Golkonda.jpg"
-            chest="/target Chest of Golkonda"
-            floor={11}
-          /> */}
       </Inner>
     </ContentContainer>
   );

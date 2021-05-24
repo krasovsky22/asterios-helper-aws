@@ -1,8 +1,6 @@
 import { DiscordUserType } from "@/types";
-import { fetchAuthenticatedUser } from "@utils/access-token";
 import React, { createContext, useContext, useState } from "react";
 import { useDidMount } from "beautiful-react-hooks";
-import { Auth } from "aws-amplify";
 
 type StateType = {
   user: DiscordUserType | null;

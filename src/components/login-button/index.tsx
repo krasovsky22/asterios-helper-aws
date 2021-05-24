@@ -7,16 +7,16 @@ const AUTH_URL = process.env.REACT_APP_DISCORD_AUTH_URL ?? "";
 
 const LoginButton = ({ children, ...rest }: WithChildrenType) => {
   return (
-    <a href={AUTH_URL} {...rest}>
-      <Container>
-        <Inner>
-          <Icon>
-            <DiscordIcon />
-          </Icon>
-          {children}
-        </Inner>
-      </Container>
-    </a>
+    // <a href={AUTH_URL} {...rest}>
+    <Container>
+      <Inner>
+        <Icon>
+          <DiscordIcon />
+        </Icon>
+        {children}
+      </Inner>
+    </Container>
+    // </a>
   );
 };
 
