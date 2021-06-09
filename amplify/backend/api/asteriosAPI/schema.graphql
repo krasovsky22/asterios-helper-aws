@@ -68,4 +68,5 @@ type ServerRaidbossDeathLogs
   raidBossId: ID!
   server: Server! @connection(fields: ["serverId"])
   raidBoss: RaidBoss! @connection(fields: ["raidBossId"])
+  _ttl: AWSTimestamp! @ttl
 }

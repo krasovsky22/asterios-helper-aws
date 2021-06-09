@@ -19,6 +19,7 @@ type RaidBossType = {
 };
 
 type RaidBossDeathRecordType = {
+  _ttl: number;
   id: string;
   title: string;
   link: string;

@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-asterios-dev-211036-unauthRole",
       "StackName": "amplify-asterios-dev-211036",
       "StackId": "arn:aws:cloudformation:us-east-1:251072015431:stack/amplify-asterios-dev-211036/894e4b70-9da0-11eb-8f3a-12f0beb86e05",
-      "AmplifyAppId": "d33czy18lgokx"
+      "AmplifyAppId": "d33czy18lgokx",
+      "ExecutionRate": "rate(1 day)"
     },
     "categories": {
       "auth": {
@@ -18,7 +19,7 @@
       "function": {
         "fetchAsteriosRss": {
           "deploymentBucketName": "amplify-asterios-dev-211036-deployment",
-          "s3Key": "amplify-builds/fetchAsteriosRss-5967354e426131466b59-build.zip"
+          "s3Key": "amplify-builds/fetchAsteriosRss-67535042626349646966-build.zip"
         }
       }
     }
@@ -33,14 +34,18 @@
       "UnauthRoleName": "amplify-asterios-prod-200737-unauthRole",
       "StackName": "amplify-asterios-prod-200737",
       "StackId": "arn:aws:cloudformation:us-east-1:251072015431:stack/amplify-asterios-prod-200737/d17b1d80-bc34-11eb-bb19-123bd221e837",
-      "AmplifyAppId": "d33czy18lgokx"
+      "AmplifyAppId": "d33czy18lgokx",
+      "ExecutionRate": "rate(1 minute)"
     },
     "categories": {
       "auth": {
         "asteriosda3ac12b": {}
       },
       "function": {
-        "fetchAsteriosRss": {}
+        "fetchAsteriosRss": {
+          "deploymentBucketName": "amplify-asterios-prod-200737-deployment",
+          "s3Key": "amplify-builds/fetchAsteriosRss-766777656253336f4259-build.zip"
+        }
       }
     }
   }
