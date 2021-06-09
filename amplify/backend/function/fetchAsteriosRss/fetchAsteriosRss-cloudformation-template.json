@@ -10,6 +10,11 @@
     "deploymentBucketName": {
       "Type": "String"
     },
+    "ExecutionRate": {
+      "Type": "String",
+      "Default": "rate(1 day)",
+      "Description": " Schedule Expression"
+    },
     "env": {
       "Type": "String"
     },
@@ -258,7 +263,7 @@
       "Properties": {
         "Description": "Schedule rule for Lambda",
         "ScheduleExpression": {
-          "Ref": "CloudWatchRule"
+          "Ref": "ExecutionRate"
         },
         "State": "ENABLED",
         "Targets": [

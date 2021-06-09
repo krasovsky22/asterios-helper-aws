@@ -1,10 +1,18 @@
 /* eslint-disable no-undef */
 import { APIGatewayProxyHandler } from "aws-lambda";
+import _ from "lodash";
 import Parser from "rss-parser";
 import { v4 as uuid } from "uuid";
 import { fetchRaidBosses, fetchServerDeathLogs, fetchServers, persisDeathLog } from "./api";
 
 const parser = new Parser();
+const TTL_DURATION = 24 * 30;
+
+const calculateTtl = () => {
+  const SECONDS_IN_AN_HOUR = 60 * 60;
+  const secondsSinceEpoch = Math.round(Date.now() / 1000);
+  return secondsSinceEpoch + TTL_DURATION * SECONDS_IN_AN_HOUR;
+};
 
 /* Amplify Params - DO NOT EDIT
 API_ASTERIOSAPI_GRAPHQLAPIENDPOINTOUTPUT
@@ -66,6 +74,7 @@ export const handler: APIGatewayProxyHandler = async () => {
         const log: RaidBossDeathRecordType = {
           id: uuid(),
           ...rest,
+          _ttl: calculateTtl(),
           serverId: server.id,
           raidBossId: boss.id,
         };
@@ -85,6 +94,7 @@ export const handler: APIGatewayProxyHandler = async () => {
         const log: RaidBossDeathRecordType = {
           id: uuid(),
           ...rest,
+          _ttl: calculateTtl(),
           serverId: server.id,
           raidBossId: boss.id,
         };

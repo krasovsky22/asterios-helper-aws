@@ -10,46 +10,13 @@ export const listServers = /* GraphQL */ `
         asteriosId
         name
         enabled
-        _version
-        _deleted
-        _lastChangedAt
         createdAt
         updatedAt
         bosses {
           nextToken
-          startedAt
         }
       }
       nextToken
-      startedAt
-    }
-  }
-`;
-export const syncServers = /* GraphQL */ `
-  query SyncServers(
-    $filter: ModelServerFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncServers(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
-      items {
-        id
-        asteriosId
-        name
-        enabled
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-        bosses {
-          nextToken
-          startedAt
-        }
-      }
-      nextToken
-      startedAt
     }
   }
 `;
@@ -61,9 +28,6 @@ export const getRaidBoss = /* GraphQL */ `
       floor
       image
       chest
-      _version
-      _deleted
-      _lastChangedAt
       createdAt
       updatedAt
       deathLogs {
@@ -76,14 +40,11 @@ export const getRaidBoss = /* GraphQL */ `
           title
           serverId
           raidBossId
-          _version
-          _deleted
-          _lastChangedAt
+          _ttl
           createdAt
           updatedAt
         }
         nextToken
-        startedAt
       }
     }
   }
@@ -97,47 +58,13 @@ export const listRaidBosses = /* GraphQL */ `
         floor
         image
         chest
-        _version
-        _deleted
-        _lastChangedAt
         createdAt
         updatedAt
         deathLogs {
           nextToken
-          startedAt
         }
       }
       nextToken
-      startedAt
-    }
-  }
-`;
-export const syncRaidBosses = /* GraphQL */ `
-  query SyncRaidBosses(
-    $filter: ModelRaidBossFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncRaidBosses(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
-      items {
-        id
-        name
-        floor
-        image
-        chest
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-        deathLogs {
-          nextToken
-          startedAt
-        }
-      }
-      nextToken
-      startedAt
     }
   }
 `;
@@ -157,9 +84,7 @@ export const listServerRaidbossDeathLogs = /* GraphQL */ `
         title
         serverId
         raidBossId
-        _version
-        _deleted
-        _lastChangedAt
+        _ttl
         createdAt
         updatedAt
         server {
@@ -167,9 +92,6 @@ export const listServerRaidbossDeathLogs = /* GraphQL */ `
           asteriosId
           name
           enabled
-          _version
-          _deleted
-          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -179,15 +101,11 @@ export const listServerRaidbossDeathLogs = /* GraphQL */ `
           floor
           image
           chest
-          _version
-          _deleted
-          _lastChangedAt
           createdAt
           updatedAt
         }
       }
       nextToken
-      startedAt
     }
   }
 `;
@@ -217,9 +135,7 @@ export const listByIsoDate = /* GraphQL */ `
         title
         serverId
         raidBossId
-        _version
-        _deleted
-        _lastChangedAt
+        _ttl
         createdAt
         updatedAt
         server {
@@ -227,9 +143,6 @@ export const listByIsoDate = /* GraphQL */ `
           asteriosId
           name
           enabled
-          _version
-          _deleted
-          _lastChangedAt
           createdAt
           updatedAt
         }
@@ -239,71 +152,11 @@ export const listByIsoDate = /* GraphQL */ `
           floor
           image
           chest
-          _version
-          _deleted
-          _lastChangedAt
           createdAt
           updatedAt
         }
       }
       nextToken
-      startedAt
-    }
-  }
-`;
-export const syncServerRaidbossDeathLogs = /* GraphQL */ `
-  query SyncServerRaidbossDeathLogs(
-    $filter: ModelServerRaidbossDeathLogsFilterInput
-    $limit: Int
-    $nextToken: String
-    $lastSync: AWSTimestamp
-  ) {
-    syncServerRaidbossDeathLogs(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      lastSync: $lastSync
-    ) {
-      items {
-        id
-        isoDate
-        content
-        contentSnippet
-        link
-        title
-        serverId
-        raidBossId
-        _version
-        _deleted
-        _lastChangedAt
-        createdAt
-        updatedAt
-        server {
-          id
-          asteriosId
-          name
-          enabled
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-        raidBoss {
-          id
-          name
-          floor
-          image
-          chest
-          _version
-          _deleted
-          _lastChangedAt
-          createdAt
-          updatedAt
-        }
-      }
-      nextToken
-      startedAt
     }
   }
 `;

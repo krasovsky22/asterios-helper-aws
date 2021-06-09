@@ -13,9 +13,7 @@ export const onCreateDeathLog = /* GraphQL */ `
       title
       serverId
       raidBossId
-      _version
-      _deleted
-      _lastChangedAt
+      _ttl
       createdAt
       updatedAt
       server {
@@ -23,14 +21,10 @@ export const onCreateDeathLog = /* GraphQL */ `
         asteriosId
         name
         enabled
-        _version
-        _deleted
-        _lastChangedAt
         createdAt
         updatedAt
         bosses {
           nextToken
-          startedAt
         }
       }
       raidBoss {
@@ -39,14 +33,10 @@ export const onCreateDeathLog = /* GraphQL */ `
         floor
         image
         chest
-        _version
-        _deleted
-        _lastChangedAt
         createdAt
         updatedAt
         deathLogs {
           nextToken
-          startedAt
         }
       }
     }
