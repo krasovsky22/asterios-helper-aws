@@ -1,6 +1,7 @@
 import { DiscordUserType } from "@/types";
 import React, { createContext, useContext, useState } from "react";
 import { useDidMount } from "beautiful-react-hooks";
+import { fetchAuthenticatedUser } from "@/utils/access-token";
 
 type StateType = {
   user: DiscordUserType | null;
@@ -21,8 +22,8 @@ export const AuthStateProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<DiscordUserType | null>(null);
 
   useDidMount(async () => {
-    //const userData = await fetchAuthenticatedUser();
-    //userData && setUser(userData);
+    const userData = await fetchAuthenticatedUser();
+    userData && setUser(userData);
   });
 
   return <MyContext.Provider value={{ user, setUser }}>{children}</MyContext.Provider>;

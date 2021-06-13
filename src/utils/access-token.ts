@@ -31,6 +31,8 @@ export async function fetchAccessToken(code: string) {
 
   const responseData = (await response.json()) as DiscordResponseType;
 
+  console.log("response", responseData);
+
   if (!responseData.error) {
     const now = new Date();
     now.setSeconds(now.getSeconds() + (responseData?.expires_in ?? 0));
